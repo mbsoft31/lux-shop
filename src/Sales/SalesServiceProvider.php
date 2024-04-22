@@ -16,10 +16,10 @@ class SalesServiceProvider extends ServiceProvider
             );
         });
         // register web and api routes
-        $this->loadRoutesFrom(__DIR__ . '../Routes/web.php');
+        /*$this->loadRoutesFrom(__DIR__ . '../Routes/web.php');
         $this->loadRoutesFrom(__DIR__ . '../Routes/api.php');
 
         // register views
-        $this->loadViewsFrom(__DIR__ . '../Resources/Views', 'sales');
+        $this->loadViewsFrom(__DIR__ . '../Resources/Views', 'sales');*/
     }
 }
