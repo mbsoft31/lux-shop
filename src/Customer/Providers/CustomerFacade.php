@@ -5,7 +5,7 @@ namespace Core\Customer\Providers;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static create(mixed $customerData)
+ * @mixin CustomerService
  */
 class CustomerFacade extends Facade
 {

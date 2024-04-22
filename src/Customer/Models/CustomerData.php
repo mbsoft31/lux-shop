@@ -28,7 +28,7 @@ class CustomerData extends Data
         );
     }
 
-    public function fromModel(Customer $customer): self
+    public static function fromModel(Customer $customer): self
     {
         return new self(
             id: $customer->id,

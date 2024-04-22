@@ -5,9 +5,7 @@ namespace Core\Product\Providers;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static create(array $data)
- * @method static createInventory($id, array $data)
- * @method static createInventoryItem($id, array $variantData)
+ * @mixin ProductService
  */
 class ProductFacade extends Facade
 {

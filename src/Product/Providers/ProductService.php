@@ -124,14 +124,13 @@ class ProductService
     }
 
     /**
-     * @param int $productId
      * @param int $itemId
      * @return InventoryItemData
      * @throws ModelNotFoundException<InventoryItem>
      */
-    public function findInventoryItem(int $productId, int $itemId): InventoryItemData
+    public function findInventoryItem(int $itemId): InventoryItemData
     {
-        return InventoryItemData::fromModel(Product::findOrFail($productId)->inventory->items()->findOrFail($itemId));
+        return InventoryItemData::fromModel(InventoryItem::findOrFail($itemId));
     }
 
     /**

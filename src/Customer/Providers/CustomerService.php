@@ -4,6 +4,7 @@ namespace Core\Customer\Providers;
 
 use App\Models\Customer;
 use Core\Customer\Models\CustomerData;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
 use Spatie\LaravelData\DataCollection;
 
@@ -44,8 +45,23 @@ class CustomerService
         return Customer::destroy($id);
     }
 
+    /**
+     * @param int $id
+     * @return CustomerData
+     * @throws ModelNotFoundException<Customer>
+     */
     public function find(int $id): CustomerData
     {
         return CustomerData::fromModel(Customer::findOrFail($id));
+    }
+
+    public function createGuestCustomer()
+    {
+        return $this->create([
+            'name' => 'Guest',
+            'email' => fake()->unique()->safeEmail(),
+            'phone' => fake()->phoneNumber(),
+            'address' => fake()->address(),
+        ]);
     }
 }

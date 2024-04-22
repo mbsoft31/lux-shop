@@ -8,12 +8,20 @@ use App\Models\InventoryItem;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\User;
+use Core\Auth\Enums\UserRole;
+use Core\Auth\Providers\AuthFacade;
 use Core\Customer\Providers\CustomerFacade;
 use Core\Product\Enums\InventoryItemStatus;
 use Core\Product\Providers\ProductFacade;
+use Core\Sales\Enums\PaymentMethod;
+use Core\Sales\Providers\SalesFacade;
 use Exception;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use function Pest\Laravel\actingAs;
 
 class DatabaseSeeder extends Seeder
 {
@@ -23,18 +31,31 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // Seed users
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@mail.com',
+
+        $admin = AuthFacade::createUser(
+            UserRole::ADMINISTRATOR,
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@mail.com',
+            ]
+        );
+
+        $cashier = AuthFacade::createUser(UserRole::CASHIER, [
+            'name' => 'Cashier User',
+            'email' => 'cashier@mail.com',
+        ]);
+
+        $inventoryManager = AuthFacade::createUser(UserRole::INVENTORY_MANAGER, [
+            'name' => 'Inventory Manager User',
+            'email' => 'inventory@mail.com',
         ]);
 
         // Seed customers
-        $customersData = Customer::factory(10)->make()->toArray();
+        /*$customersData = Customer::factory(10)->make()->toArray();
 
         foreach ($customersData as $customerData) {
-            CustomerFacade::create($customerData);
-        }
+            CustomerFacade::create(data: $customerData);
+        }*/
 
         // Seed products
         $products = [
@@ -384,25 +405,26 @@ class DatabaseSeeder extends Seeder
 
         foreach ($products as $productData) {
             $data = array_merge($productData, []);
-            $product = ProductFacade::create($data);
-            $inventory = ProductFacade::createInventory($product->id, $data);
+            $product = ProductFacade::create(data: $data);
+            $inventory = ProductFacade::createInventory(productId: $product->id, data: $data);
 
             foreach ($productData['variants'] as $variant) {
                 $variantData = array_merge($variant, []);
-                ProductFacade::createInventoryItem($inventory->id, $variantData);
+                ProductFacade::createInventoryItem(inventoryId: $inventory->id, data: $variantData);
             }
         }
 
         // Seed sales
-        $customerIds = Customer::pluck('id')->toArray();
+        //$customerIds = Customer::pluck('id')->toArray();
         $productIds = InventoryItem::pluck('id')->toArray();
 
+        // auth as cashier
+        Auth::login($cashier);
         for ($i = 0; $i < 10; $i++) {
-            $customer = Customer::find(random_int(1, count($customerIds)));
-            $sale = Sale::factory()->create([
-                'customer_id' => $customer->id,
-                'total_amount' => 0,
-            ]);
+            // $customer = Customer::find(random_int(1, count($customerIds)));
+            $sale = SalesFacade::createSale(
+                paymentMethod: Arr::random(PaymentMethod::cases())
+            );
 
             $totalAmount = 0;
 
@@ -419,12 +441,12 @@ class DatabaseSeeder extends Seeder
                 $totalAmount += $quantity * $price;
 
                 // Create sale item
-                SaleItem::factory()->create([
-                    'sale_id' => $sale->id,
-                    'product_id' => $inventory_item->product_id,
-                    'quantity' => $quantity,
-                    'price' => $price,
-                ]);
+                SalesFacade::addSaleItem(
+                    saleId: $sale->id,
+                    inventoryItemId: $inventory_item->id,
+                    quantity: $quantity,
+                    price: $price
+                );
 
                 $inventory_item->quantity -= $quantity;
                 $inventory_item->save();
