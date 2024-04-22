@@ -5,14 +5,12 @@ namespace Database\Seeders;
 use App\Models\Customer;
 use App\Models\Inventory;
 use App\Models\InventoryItem;
-use App\Models\Product;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use App\Models\User;
+use Core\Customer\Providers\CustomerFacade;
 use Core\Product\Enums\InventoryItemStatus;
-use Core\Product\Models\InventoryData;
-use Core\Product\Models\InventoryItemData;
-use Core\Product\Models\ProductData;
+use Core\Product\Providers\ProductFacade;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Log;
@@ -32,7 +30,11 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Seed customers
-        Customer::factory(10)->create();
+        $customersData = Customer::factory(10)->make()->toArray();
+
+        foreach ($customersData as $customerData) {
+            CustomerFacade::create($customerData);
+        }
 
         // Seed products
         $products = [
@@ -382,20 +384,12 @@ class DatabaseSeeder extends Seeder
 
         foreach ($products as $productData) {
             $data = array_merge($productData, []);
-            $product = ProductData::fromArray($data)->toModel();
-            $product->save();
-
-            // Create inventory record for each product
-            $inventory = InventoryData::fromArray($data)->toModel();
-            $inventory->product_id = $product->id;
-            $inventory->save();
+            $product = ProductFacade::create($data);
+            $inventory = ProductFacade::createInventory($product->id, $data);
 
             foreach ($productData['variants'] as $variant) {
                 $variantData = array_merge($variant, []);
-                $inventory_item = InventoryItemData::fromArray($variantData)->toModel();
-                $inventory_item->product_id = $product->id;
-                $inventory_item->inventory_id = $inventory->id;
-                $inventory_item->save();
+                ProductFacade::createInventoryItem($inventory->id, $variantData);
             }
         }
 

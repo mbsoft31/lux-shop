@@ -12,6 +12,8 @@ class InventoryItemData extends Data
 
     public function __construct(
         public ?int $id,
+        public int $product_id,
+        public int $inventory_id,
         public float $purchase_price,
         public float $sell_price,
         public ?string $brand,
@@ -33,6 +35,8 @@ class InventoryItemData extends Data
     {
         return new InventoryItemData(
             id: $data['id'] ?? null,
+            product_id: $data['product_id'],
+            inventory_id: $data['inventory_id'],
             purchase_price: $data['purchase_price'],
             sell_price: $data['sell_price'],
             brand: $data['brand'] ?? null,
@@ -53,6 +57,8 @@ class InventoryItemData extends Data
     {
         return new InventoryItemData(
             id: $model->id,
+            product_id: $model->product_id,
+            inventory_id: $model->inventory_id,
             purchase_price: $model->purchase_price,
             sell_price: $model->sell_price,
             brand: $model?->brand,
@@ -73,6 +79,8 @@ class InventoryItemData extends Data
     {
         return [
             'id' => $this->id,
+            'product_id' => $this->product_id,
+            'inventory_id' => $this->inventory_id,
             'quantity' => $this->quantity,
             'size' => $this->size,
             'color' => $this->color,
@@ -98,7 +106,8 @@ class InventoryItemData extends Data
             }
         } else {
             $inventory = new InventoryItem();
-            $inventory->id = $this->id;
+            $inventory->product_id = $this->product_id;
+            $inventory->inventory_id = $this->inventory_id;
             $inventory->purchase_price = $this->purchase_price;
             $inventory->sell_price = $this->sell_price;
             $inventory->brand = $this->brand;

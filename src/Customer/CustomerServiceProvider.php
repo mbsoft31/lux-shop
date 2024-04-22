@@ -2,14 +2,14 @@
 
 namespace Core\Customer;
 
-use Core\Product\Providers\CustomerService;
+use Core\Customer\Providers\CustomerService;
 use Illuminate\Support\ServiceProvider;
 
-class CustomerServiceProvder extends ServiceProvider
+class CustomerServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        $this->app->bind('customer', function () {
+        $this->app->bind('customer-service', function () {
             return new CustomerService();
         });
         // register web and api routes
