@@ -57,11 +57,8 @@ class CustomerService
 
     public function createGuestCustomer()
     {
-        return $this->create([
+        return $this->create(Customer::factory()->make([
             'name' => 'Guest',
-            'email' => fake()->unique()->safeEmail(),
-            'phone' => fake()->phoneNumber(),
-            'address' => fake()->address(),
-        ]);
+        ])->toArray());
     }
 }

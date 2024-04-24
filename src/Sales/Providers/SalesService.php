@@ -6,10 +6,8 @@ use App\Models\Sale;
 use App\Models\SaleItem;
 use Core\Customer\Models\CustomerData;
 use Core\Customer\Providers\CustomerService;
-use Core\Product\Providers\ProductFacade;
 use Core\Product\Providers\ProductService;
 use Core\Sales\Enums\PaymentMethod;
-use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
@@ -38,6 +36,29 @@ class SalesService
         return $sale;
     }
 
+
+    /**
+     * @param int $saleId
+     * @param array $items
+     * @return void
+     * @throws ModelNotFoundException
+     */
+    public function addSaleItems(int $saleId, array $items): void
+    {
+        $sale = Sale::findOrFail($saleId);
+        for ($j = 0; $j < count($items); $j++) {
+            $item = $items[$j];
+
+            $this->addSaleItem(
+                saleId: $sale->id,
+                inventoryItemId: $item['inventory_item_id'],
+                quantity: $item['quantity'],
+                price: $item['price']
+            );
+        }
+        $sale->calculateTotalAmount();
+    }
+
     /**
      * @param int $saleId
      * @param int $inventoryItemId
@@ -46,7 +67,7 @@ class SalesService
      * @return SaleItem|Model
      * @throws ModelNotFoundException
      */
-    public function addSaleItem(int $saleId, int $inventoryItemId, int $quantity, float $price,): Model|SaleItem
+    public function addSaleItem(int $saleId, int $inventoryItemId, int $quantity, float $price): Model|SaleItem
     {
         $sale = Sale::findOrFail($saleId);
         $inventoryItem = $this->productService->findInventoryItem($inventoryItemId);
@@ -57,8 +78,6 @@ class SalesService
         ]);
     }
 
-
-
     private function getCustomer(?int $customerId): CustomerData
     {
         if ($customerId === null || $customerId <= 0) {
@@ -67,15 +86,8 @@ class SalesService
         return $this->customerService->find($customerId);
     }
 
-    /*private function calculateTotalAmount(array $items): float
+    public function calculateTotalAmount(array $items)
     {
-        $totalAmount = 0;
-        foreach ($items as $item) {
-            $product = $this->productService->find($item['product_id']);
-            $totalAmount += $product->price * $item['quantity'];
-        }
-        return $totalAmount;
-    }*/
-
-
+        return collect($items)->sum(fn($item) => $item['quantity'] * $item['price']);
+    }
 }

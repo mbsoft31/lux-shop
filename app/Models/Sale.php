@@ -32,4 +32,13 @@ class Sale extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * @return bool
+     */
+    public function calculateTotalAmount(): bool
+    {
+        $this->total_amount = $this->items->sum(fn(SaleItem $item) => $item->quantity * $item->price);
+        return $this->save();
+    }
 }

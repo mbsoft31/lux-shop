@@ -5,7 +5,7 @@ namespace Core\Auth\Providers;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static seedRoles()
+ * @mixin AuthService
  */
 class AuthFacade extends Facade
 {

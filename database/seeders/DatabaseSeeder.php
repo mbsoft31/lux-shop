@@ -2,15 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Customer;
-use App\Models\Inventory;
 use App\Models\InventoryItem;
-use App\Models\Sale;
-use App\Models\SaleItem;
 use App\Models\User;
 use Core\Auth\Enums\UserRole;
 use Core\Auth\Providers\AuthFacade;
-use Core\Customer\Providers\CustomerFacade;
 use Core\Product\Enums\InventoryItemStatus;
 use Core\Product\Providers\ProductFacade;
 use Core\Sales\Enums\PaymentMethod;
@@ -18,10 +13,8 @@ use Core\Sales\Providers\SalesFacade;
 use Exception;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use function Pest\Laravel\actingAs;
+use Random\RandomException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -31,32 +24,17 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        $this->seedUsers();
+        $this->seedProducts();
+        $this->seedSales();
+    }
 
-        $admin = AuthFacade::createUser(
-            UserRole::ADMINISTRATOR,
-            [
-                'name' => 'Admin User',
-                'email' => 'admin@mail.com',
-            ]
-        );
-
-        $cashier = AuthFacade::createUser(UserRole::CASHIER, [
-            'name' => 'Cashier User',
-            'email' => 'cashier@mail.com',
-        ]);
-
-        $inventoryManager = AuthFacade::createUser(UserRole::INVENTORY_MANAGER, [
-            'name' => 'Inventory Manager User',
-            'email' => 'inventory@mail.com',
-        ]);
-
-        // Seed customers
-        /*$customersData = Customer::factory(10)->make()->toArray();
-
-        foreach ($customersData as $customerData) {
-            CustomerFacade::create(data: $customerData);
-        }*/
-
+    /**
+     * @return void
+     * @throws Exception
+     */
+    public function seedProducts(): void
+    {
         // Seed products
         $products = [
             [
@@ -413,64 +391,61 @@ class DatabaseSeeder extends Seeder
                 ProductFacade::createInventoryItem(inventoryId: $inventory->id, data: $variantData);
             }
         }
+    }
 
+    /**
+     * @return void
+     */
+    public function seedUsers(): void
+    {
+        $admin = AuthFacade::createUser(
+            UserRole::ADMINISTRATOR,
+            [
+                'name' => 'Admin User',
+                'email' => 'admin@mail.com',
+            ]
+        );
+
+        $cashier = AuthFacade::createUser(UserRole::CASHIER, [
+            'name' => 'Cashier User',
+            'email' => 'cashier@mail.com',
+        ]);
+
+        $inventoryManager = AuthFacade::createUser(UserRole::INVENTORY_MANAGER, [
+            'name' => 'Inventory Manager User',
+            'email' => 'inventory@mail.com',
+        ]);
+    }
+
+    /**
+     * @return void
+     * @throws RandomException
+     */
+    public function seedSales(): void
+    {
         // Seed sales
-        //$customerIds = Customer::pluck('id')->toArray();
         $productIds = InventoryItem::pluck('id')->toArray();
 
         // auth as cashier
-        Auth::login($cashier);
+        Auth::login(User::where('email', 'cashier@mail.com')->first());
         for ($i = 0; $i < 10; $i++) {
-            // $customer = Customer::find(random_int(1, count($customerIds)));
+
             $sale = SalesFacade::createSale(
                 paymentMethod: Arr::random(PaymentMethod::cases())
             );
 
-            $totalAmount = 0;
-
-            // Add random products to the sale
-            for ($j = 0; $j < random_int(1, 5); $j++) {
-                $inventory_item = InventoryItem::find(random_int(1, count($productIds)));
-                $quantity = random_int(1, 5);
-
-                // Get product price
-
-                $price = $inventory_item->sell_price;
-
-                // Calculate total amount for the sale
-                $totalAmount += $quantity * $price;
-
-                // Create sale item
-                SalesFacade::addSaleItem(
-                    saleId: $sale->id,
-                    inventoryItemId: $inventory_item->id,
-                    quantity: $quantity,
-                    price: $price
-                );
-
-                $inventory_item->quantity -= $quantity;
-                $inventory_item->save();
-
-                // Update inventory
-                $inventory = Inventory::find($inventory_item->inventory_id);
-                // Check if inventory record exists
-                if ($inventory) {
-                    $inventory->quantity -= $quantity;
-                    $inventory->save();
-                } else {
-                    // Create a new inventory record
-                    /*Inventory::create([
-                        'product_id' => $product->id,
-                        'quantity' => -$quantity, // Assuming negative quantity indicates sold items
-                    ]);*/
-                    // log
-                    Log::info('Inventory record not found for product ID: ' . $product->id);
-                }
+            $productCount = random_int(1, 5);
+            $items = [];
+            for ($k = 0; $k < $productCount; $k++) {
+                $inventory_item_id = random_int(1, count($productIds));
+                $items[] = [
+                    'inventory_item_id' => ProductFacade::findInventoryItem($inventory_item_id)->id,
+                    'quantity' => random_int(1, 5),
+                    'price' => ProductFacade::findInventoryItem($inventory_item_id)->sell_price,
+                ];
             }
 
-            // Update total amount for the sale
-            $sale->total_amount = $totalAmount;
-            $sale->save();
+            SalesFacade::addSaleItems($sale->id, $items);
         }
     }
 }
