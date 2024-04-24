@@ -31,6 +31,11 @@
                                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
                             </div>
 
+                            <div>
+                                <x-input-label for="quantity" :value="__('Quantity')" />
+                                <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full bg-gray-100" :value="$inventory->quantity" disabled />
+                            </div>
+
                             <div class="flex items-center gap-4">
                                 <x-primary-button>{{ __('Save') }}</x-primary-button>
 
@@ -72,21 +77,11 @@
                             @method('patch')
 
                             <div>
-                                <x-input-label for="product_id" :value="__('Product ID')" />
-                                <x-text-input id="product_id" name="product_id" type="text" class="mt-1 block w-full" :value="old('product_id', $inventory->product_id)" required autofocus autocomplete="product_id" />
-                                <x-input-error class="mt-2" :messages="$errors->get('product_id')" />
-                            </div>
+                                <label for="product_id" class="sr-only">{{ __('Product ID') }}</label>
+                                <input name="product_id" type="hidden" :value="{{  $inventory->product_id }}" />
 
-                            <div>
-                                <x-input-label for="inventory_id" :value="__('Inventory ID')" />
-                                <x-text-input id="inventory_id" name="inventory_id" type="text" class="mt-1 block w-full" :value="old('inventory_id', $inventory->id)" required autofocus autocomplete="inventory_id" />
-                                <x-input-error class="mt-2" :messages="$errors->get('inventory_id')" />
-                            </div>
-
-                            <div>
-                                <x-input-label for="quantity" :value="__('Quantity')" />
-                                <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" :value="old('quantity', $inventory->quantity)" required autofocus autocomplete="quantity" />
-                                <x-input-error class="mt-2" :messages="$errors->get('quantity')" />
+                                <label for="inventory_id" class="sr-only">{{ __('Inventory ID') }}</label>
+                                <input name="inventory_id" type="hidden" value="{{  $inventory->id }}" />
                             </div>
 
                             <div class="mt-6 space-y-6">
