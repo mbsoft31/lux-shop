@@ -87,29 +87,78 @@
                             <div class="mt-6 space-y-6">
                                 @foreach($inventory->items as $item)
                                     <div class="mt-6 py-4 space-y-6 border-t">
-                                        <div class="flex items-center gap-6">
+                                        <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
+                                            <div class="flex-1">
+                                                <x-input-label for="sku" :value="__('SKU')"/>
+                                                <x-text-input id="sku" name="items[{{$item->id}}][sku]" type="text"
+                                                              class="mt-1 block w-full"
+                                                              :value="old('items.'.$item->id.'.sku', $item->sku)"
+                                                              required autofocus autocomplete="sku"/>
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'.sku')"/>
+                                            </div>
+                                            <div class="flex-1">
+                                                <x-input-label for="barcode" :value="__('Bar code')"/>
+                                                <x-text-input id="barcode" name="items[{{$item->id}}][barcode]" type="text"
+                                                              class="mt-1 block w-full"
+                                                              :value="old('items.'.$item->id.'.barcode', $item->barcode)" required
+                                                              autofocus autocomplete="barcode"/>
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'.barcode]')"/>
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
                                             <div class="flex-1">
                                                 <x-input-label for="purchase_price" :value="__('Price (Purchase)')"/>
-                                                <x-text-input id="purchase_price" name="purchase_price" type="text"
+                                                <x-text-input id="purchase_price" name="items[{{$item->id}}][purchase_price]" type="text"
                                                               class="mt-1 block w-full"
-                                                              :value="old('purchase_price', $item->purchase_price)"
+                                                              :value="old('items.'.$item->id.'.purchase_price', $item->purchase_price)"
                                                               required autofocus autocomplete="purchase_price"/>
-                                                <x-input-error class="mt-2" :messages="$errors->get('purchase_price')"/>
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'.purchase_price')"/>
                                             </div>
                                             <div class="flex-1">
                                                 <x-input-label for="sell_price" :value="__('Price (Sell)')"/>
-                                                <x-text-input id="sell_price" name="sell_price" type="text"
+                                                <x-text-input id="sell_price" name="items[{{$item->id}}][sell_price]" type="text"
                                                               class="mt-1 block w-full"
-                                                              :value="old('sell_price', $item->sell_price)" required
+                                                              :value="old('items.'.$item->id.'.sell_price', $item->sell_price)" required
                                                               autofocus autocomplete="sell_price"/>
-                                                <x-input-error class="mt-2" :messages="$errors->get('sell_price')"/>
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'.sell_price]')"/>
                                             </div>
                                         </div>
                                         <div>
                                             <x-input-label for="quantity" :value="__('Quantity')" />
-                                            <x-text-input id="quantity" name="quantity" type="text" class="mt-1 block w-full" :value="old('quantity', $item->quantity)" required autofocus autocomplete="quantity" />
-                                            <x-input-error class="mt-2" :messages="$errors->get('quantity')" />
+                                            <x-text-input id="quantity" name="items[{{$item->id}}][quantity]" type="text" class="mt-1 block w-full" :value="old('items.'.$item->id.'quantity', $item->quantity)" required autofocus autocomplete="quantity" />
+                                            <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'quantity')" />
                                         </div>
+                                        <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
+                                            <div class="h-14 w-14 flex-shrink-0">
+                                                <img class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2" src="{{ $item->image }}" alt="{{ 'image of '.$item->product->name }}">
+                                            </div>
+                                            <div>
+                                                <x-input-label for="image" :value="__('Image')" />
+                                                <input id="image" name="items[{{$item->id}}][image]" type="file" class="mt-1 block w-full" value="{{old('items.'.$item->id.'image', $item->image)}}" />
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'image')" />
+                                            </div>
+                                        </div>
+
+                                        {{--Optional Metadata--}}
+                                        <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
+                                            <div class="flex-1">
+                                                <x-input-label for="size" :value="__('size')"/>
+                                                <x-text-input id="size" name="items[{{$item->id}}][size]" type="text"
+                                                              class="mt-1 block w-full"
+                                                              :value="old('items.'.$item->id.'.size', $item->size)"
+                                                              required autofocus autocomplete="size"/>
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'.size')"/>
+                                            </div>
+                                            <div class="flex-1">
+                                                <x-input-label for="color" :value="__('color')"/>
+                                                <x-text-input id="color" name="items[{{$item->id}}][color]" type="text"
+                                                              class="mt-1 block w-full"
+                                                              :value="old('items.'.$item->id.'.color', $item->color)" required
+                                                              autofocus autocomplete="color"/>
+                                                <x-input-error class="mt-2" :messages="$errors->get('items.'.$item->id.'.color]')"/>
+                                            </div>
+                                        </div>
+
                                         <div class="flex items-center gap-4">
                                             <x-primary-button>{{ __('Save') }}</x-primary-button>
 
