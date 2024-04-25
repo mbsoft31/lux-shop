@@ -72,7 +72,7 @@
                             </p>
                         </header>
 
-                        <form method="post" action="{{ '#' }}" class="mt-6 space-y-6">
+                        <form enctype="multipart/form-data" method="post" action="{{ '#' }}" class="mt-6 space-y-6" >
                             @csrf
                             @method('patch')
 

@@ -23,7 +23,7 @@ Route::get('/product/{product}/edit', function (\App\Models\Product $product) {
         'inventory' => $product->inventory,
     ]);
 })->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
-    ->name('admin.product.create');
+    ->name('admin.product.edit');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
