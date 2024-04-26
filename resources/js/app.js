@@ -1,9 +1,14 @@
 import './bootstrap';
 
-/*
 import Alpine from 'alpinejs';
 
-window.Alpine = Alpine;
+// Check if Alpine.js is already initialized
+if (!window.Alpine) {
+    // If Alpine.js is not initialized, set it to the imported instance
+    window.Alpine = Alpine;
 
-Alpine.start();
-*/
+    // Start Alpine.js
+    Alpine.start();
+} else {
+    console.warn('Alpine.js is already initialized.');
+}

@@ -12,6 +12,9 @@ class InventoryItemForm extends Component
 {
     use WithFileUploads;
 
+    public bool $show = false;
+    public string $label = 'Create';
+
     public $form = [
         'product_id' => null,
         'inventory_id' => null,
@@ -25,7 +28,7 @@ class InventoryItemForm extends Component
         'image' => null,
     ];
 
-    public function mount($item, $product, $inventory)
+    public function mount($item, $product, $inventory, $label = 'create'): void
     {
         if ($item) {
             $this->form = $item->toArray();
@@ -41,6 +44,8 @@ class InventoryItemForm extends Component
             $this->form['color'] = 'white';
             $this->form['image'] = '';
         }
+
+        $this->label = $label;
     }
 
     public function generateBarcode($inventoryId, $productId): string
@@ -55,6 +60,28 @@ class InventoryItemForm extends Component
 
     public function saveItem(): void
     {
+        if ($item = InventoryItem::find($this->form['id'])) {
+            $this->validate([
+                'form.sku' => 'required',
+                'form.barcode' => 'required',
+                'form.purchase_price' => 'required',
+                'form.sell_price' => 'required',
+                'form.quantity' => 'required',
+                'form.size' => 'required',
+                'form.color' => 'required',
+            ]);
+
+            if ($item->image != $this->form['image']) {
+                $this->form['image'] = $this->form['image']->store('public/products/'. $this->form['product_id'] .'/inventory-items');
+                $this->form['image'] = Storage::url($this->form['image']);
+            } else {
+                $this->form['image'] = $item->image;
+            }
+
+            $item->update($this->form);
+        } else {
+            $this->createItem();
+        }
         $this->validate([
             'form.sku' => 'required',
             'form.barcode' => 'required',
@@ -66,7 +93,7 @@ class InventoryItemForm extends Component
             'form.image' => 'required',
         ]);
 
-        $this->form['image'] = $this->form['image']->store('public/inventory-items');
+        $this->form['image'] = $this->form['image']->store('public/products/'. $this->form['product_id'] .'/inventory-items');
         $this->form['image'] = Storage::url($this->form['image']);
 
         InventoryItem::create($this->form);

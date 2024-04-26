@@ -14,9 +14,10 @@
                             </p>
                         </div>
                         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                            <x-primary-button link="true" href="{{ route('admin.product.create') }}">
+                            {{--<x-primary-button link="true" href="{{ route('admin.product.create') }}">
                                 {{ __('Add Product') }}
-                            </x-primary-button>
+                            </x-primary-button>--}}
+                            <livewire:product-create-form />
                         </div>
                     </div>
                     <div class="mt-8 flow-root">

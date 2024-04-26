@@ -12,6 +12,7 @@ class ProductData extends Data
         public ?int $id,
         public string $name,
         public ?string $description,
+        public ?string $image = null,
     )
     {}
 
@@ -20,7 +21,8 @@ class ProductData extends Data
         return new ProductData(
             id: $data['id'] ?? null,
             name: $data['name'],
-            description: $data['description'],
+            description: $data['description'] ?? null,
+            image: $data['image'] ?? null,
         );
     }
 
@@ -30,6 +32,7 @@ class ProductData extends Data
             id: $model->id,
             name: $model->name,
             description: $model->description,
+            image: $model->image,
         );
     }
 
@@ -39,6 +42,7 @@ class ProductData extends Data
             'id' => $this->id,
             'name' => $this->name,
             'description' => $this->description,
+            'image' => $this->image,
         ];
     }
 
@@ -51,6 +55,7 @@ class ProductData extends Data
             $product->fill([
                 'name' => $this->name,
                 'description' => $this->description,
+                'image' => $this->image,
             ]);
         }
         return $product;
