@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Models\Product;
 use Core\Auth\Enums\UserRole;
+use Core\Product\Controllers\API\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -12,12 +14,31 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+Route::get('/products', [ProductController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('admin.products.index');
+
 Route::get('/product/create', function () {
     return view('admin.product.create');
 })->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
     ->name('admin.product.create');
 
-Route::get('/product/{product}/edit', function (\App\Models\Product $product) {
+Route::post('/product', [ProductController::class, 'store'])
+    ->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
+    ->name('admin.product.store');
+
+/*Route::get('/product/{product}', function (\App\Models\Product $product) {
+    return view('admin.product.show', [
+        'product' => $product,
+        'inventory' => $product->inventory,
+    ]);
+})->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
+    ->name('admin.product.show');*/
+
+Route::get('/product/{product}/edit', function (Product $product) {
+    // TODO: implement javascript for the form to function properly
+    // TODO: implement the form to update the product
+    // TODO: implement the form to update the inventory items
     return view('admin.product.edit', [
         'product' => $product,
         'inventory' => $product->inventory,

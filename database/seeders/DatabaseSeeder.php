@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Inventory;
 use App\Models\InventoryItem;
 use App\Models\User;
 use Core\Auth\Enums\UserRole;
@@ -384,7 +385,8 @@ class DatabaseSeeder extends Seeder
         foreach ($products as $productData) {
             $data = array_merge($productData, []);
             $product = ProductFacade::create(data: $data);
-            $inventory = ProductFacade::createInventory(productId: $product->id, data: $data);
+            /*$inventory = ProductFacade::createInventory(productId: $product->id, data: $data);*/
+            $inventory = Inventory::where('product_id', $product->id)->first();
 
             foreach ($productData['variants'] as $variant) {
                 $variantData = array_merge($variant, []);

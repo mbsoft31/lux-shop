@@ -41,6 +41,9 @@ class ProductService
     {
         $product = ProductData::fromArray($data)->toModel();
         $product->save();
+        $product->inventory()->create([
+            'quantity' => 0,
+        ]);
         return ProductData::fromModel($product);
     }
 
@@ -149,6 +152,19 @@ class ProductService
             'inventory_id' => $inventory->id,
         ])->toModel();
         $inventory->items()->save($item);
+        return InventoryItemData::fromModel($item);
+    }
+
+    /**
+     * @param int $itemId
+     * @param int $quantity
+     * @return InventoryItemData
+     * @throws ModelNotFoundException<InventoryItem>
+     */
+    public function updateInventoryItemQuantity(int $itemId, int $quantity): InventoryItemData
+    {
+        $item = InventoryItem::findOrFail($itemId);
+        $item->update(['quantity' => $quantity]);
         return InventoryItemData::fromModel($item);
     }
 }
