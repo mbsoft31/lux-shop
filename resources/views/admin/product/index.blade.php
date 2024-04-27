@@ -17,7 +17,7 @@
                             {{--<x-primary-button link="true" href="{{ route('admin.product.create') }}">
                                 {{ __('Add Product') }}
                             </x-primary-button>--}}
-                            <livewire:product-create-form />
+                            <livewire:product-create-form :show="false" :label="__('Add Product')" />
                         </div>
                     </div>
                     <div class="mt-8 flow-root">

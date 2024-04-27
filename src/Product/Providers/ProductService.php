@@ -11,13 +11,13 @@ use Core\Product\Models\ProductData;
 use Exception;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Collection;
-use Spatie\LaravelData\Attributes\DataCollectionOf;
 
 class ProductService
 {
 
     public function __construct()
-    {}
+    {
+    }
 
     /**
      * @return array|Collection
@@ -48,29 +48,6 @@ class ProductService
     }
 
     /**
-     * @param int $id
-     * @param array $data
-     * @return ProductData
-     * @throws ModelNotFoundException<Product>
-     */
-    public function update(int $id, array $data): ProductData
-    {
-        $product = Product::findOrFail($id);
-        $product->update($data);
-        return ProductData::fromModel($product);
-    }
-
-    /**
-     * @param int $id
-     * @return bool
-     * @throws ModelNotFoundException<Product>
-     */
-    public function delete(int $id): bool
-    {
-        return Product::findOrFail($id)->delete();
-    }
-
-    /**
      * @param int $productId
      * @return InventoryData
      * @throws ModelNotFoundException<Inventory>
@@ -94,6 +71,19 @@ class ProductService
     }
 
     /**
+     * @param int $id
+     * @param array $data
+     * @return ProductData
+     * @throws ModelNotFoundException<Product>
+     */
+    public function update(int $id, array $data): ProductData
+    {
+        $product = Product::findOrFail($id);
+        $product->update($data);
+        return ProductData::fromModel($product);
+    }
+
+    /**
      * @param int $productId
      * @return bool
      * @throws ModelNotFoundException<Inventory>
@@ -104,10 +94,21 @@ class ProductService
     }
 
     /**
+     * @param int $id
+     * @return bool
+     * @throws ModelNotFoundException<Product>
+     */
+    public function delete(int $id): bool
+    {
+        return Product::findOrFail($id)->delete();
+    }
+
+    /**
      * @param int $productId
      * @param array $data
      * @return InventoryData
-     * @throws Exception
+     * @throws ModelNotFoundException<Product>
+     * @throws ModelNotFoundException<Inventory>
      */
     public function createInventory(int $productId, array $data): InventoryData
     {
@@ -123,7 +124,7 @@ class ProductService
     public function allInventoryItems(int $productId): Collection
     {
         $inventory = Product::findOrFail($productId)->inventory;
-        return InventoryItemData::collect($inventory->items);
+        return InventoryItemData::collect(items: $inventory->items()->get());
     }
 
     /**
@@ -141,7 +142,7 @@ class ProductService
      * @param array $data
      * @return InventoryItemData
      * @throws ModelNotFoundException<Inventory>
-     * @throws Exception
+     * @throws ModelNotFoundException<InventoryItem>
      */
     public function createInventoryItem(int $inventoryId, array $data): InventoryItemData
     {

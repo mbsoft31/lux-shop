@@ -4,6 +4,7 @@ namespace Core\Product\Livewire;
 
 use App\Models\InventoryItem;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
@@ -14,38 +15,104 @@ class InventoryItemForm extends Component
 
     public bool $show = false;
     public string $label = 'Create';
-
-    public $form = [
-        'product_id' => null,
-        'inventory_id' => null,
-        'sku' => null,
-        'barcode' => null,
-        'purchase_price' => null,
-        'sell_price' => null,
-        'quantity' => null,
-        'size' => null,
-        'color' => null,
-        'image' => null,
-    ];
+    public $form = [];
 
     public function mount($item, $product, $inventory, $label = 'create'): void
     {
-        if ($item) {
-            $this->form = $item->toArray();
+        $this->form = $item ? $item->toArray() : $this->createNewItem($product, $inventory);
+        $this->label = $label;
+    }
+
+    private function createNewItem($product, $inventory): array
+    {
+        return [
+            'product_id' => $product->id,
+            'inventory_id' => $inventory->id,
+            'sku' => $this->generateSKU($inventory->id),
+            'barcode' => $this->generateBarcode($inventory->id, $product->id),
+            'purchase_price' => 0.0,
+            'sell_price' => 0.0,
+            'quantity' => 0,
+            'size' => 'M',
+            'color' => '#000000',
+            'image' => '',
+        ];
+    }
+
+    public function saveItem(): void
+    {
+        $validated = $this->validateForm();
+
+        if ($item = InventoryItem::find($this->form['id'] ?? null)) {
+            $item = $this->updateItem($item);
         } else {
-            $this->form['product_id'] = $product->id;
-            $this->form['inventory_id'] = $inventory->id;
-            $this->form['sku'] = $this->generateSKU($inventory->id);
-            $this->form['barcode'] = $this->generateBarcode($inventory->id, $product->id);
-            $this->form['purchase_price'] = 0.0;
-            $this->form['sell_price'] = 0.0;
-            $this->form['quantity'] = 0;
-            $this->form['size'] = 'M';
-            $this->form['color'] = 'white';
-            $this->form['image'] = '';
+            $item = $this->createItem();
         }
 
-        $this->label = $label;
+        if ($this->updateInventory($item)) {
+            $this->show = false;
+            session()->flash('success', 'Inventory item saved successfully');
+        } else {
+            session()->flash('error', 'Failed to update inventory');
+        }
+
+        $this->redirect(route('admin.product.edit', $this->form['product_id']));
+    }
+
+    /**
+     * @return array
+     *
+     * @throws ValidationException
+     */
+    private function validateForm(): array
+    {
+        return $this->validate([
+            'form.sku' => 'required',
+            'form.barcode' => 'required',
+            'form.purchase_price' => 'required',
+            'form.sell_price' => 'required',
+            'form.quantity' => 'required',
+            'form.size' => 'required',
+            'form.color' => 'required',
+            'form.image' => 'required',
+        ], [
+            'form.sku.required' => __('SKU is required'),
+            'form.barcode.required' => __('Barcode is required'),
+            'form.purchase_price.required' => __('Purchase price is required'),
+            'form.sell_price.required' => __('Sell price is required'),
+            'form.quantity.required' => __('Quantity is required'),
+            'form.size.required' => __('Size is required'),
+            'form.color.required' => __('Color is required'),
+            'form.image.required' => __('Image is required'),
+        ]);
+    }
+
+    private function updateItem($item): InventoryItem
+    {
+        $this->form['image'] = $this->updateImage($item);
+        $item->update($this->form);
+        return $item;
+    }
+
+    private function updateImage($item): string
+    {
+        if ($item->image != $this->form['image']) {
+            return $this->storeImage();
+        }
+
+        return $item->image;
+    }
+
+    private function createItem(): InventoryItem
+    {
+        $this->form['image'] = $this->storeImage();
+        return InventoryItem::create($this->form);
+    }
+
+    private function storeImage(): string
+    {
+        $path = $this->form['image']->store('public/products/'. $this->form['product_id'] .'/inventory-items');
+        return Storage::url($path);
     }
 
     public function generateBarcode($inventoryId, $productId): string
@@ -58,47 +125,12 @@ class InventoryItemForm extends Component
         return 'SKU-' . str_pad($inventoryId, 5, '0', STR_PAD_LEFT) . '-' . rand(100, 999);
     }
 
-    public function saveItem(): void
+    public function updateInventory(InventoryItem $item): bool
     {
-        if ($item = InventoryItem::find($this->form['id'])) {
-            $this->validate([
-                'form.sku' => 'required',
-                'form.barcode' => 'required',
-                'form.purchase_price' => 'required',
-                'form.sell_price' => 'required',
-                'form.quantity' => 'required',
-                'form.size' => 'required',
-                'form.color' => 'required',
-            ]);
-
-            if ($item->image != $this->form['image']) {
-                $this->form['image'] = $this->form['image']->store('public/products/'. $this->form['product_id'] .'/inventory-items');
-                $this->form['image'] = Storage::url($this->form['image']);
-            } else {
-                $this->form['image'] = $item->image;
-            }
-
-            $item->update($this->form);
-        } else {
-            $this->createItem();
-        }
-        $this->validate([
-            'form.sku' => 'required',
-            'form.barcode' => 'required',
-            'form.purchase_price' => 'required',
-            'form.sell_price' => 'required',
-            'form.quantity' => 'required',
-            'form.size' => 'required',
-            'form.color' => 'required',
-            'form.image' => 'required',
+        $inventory = $item->inventory;
+        return $inventory->update([
+            'quantity' => $inventory->items->sum('quantity'),
         ]);
-
-        $this->form['image'] = $this->form['image']->store('public/products/'. $this->form['product_id'] .'/inventory-items');
-        $this->form['image'] = Storage::url($this->form['image']);
-
-        InventoryItem::create($this->form);
-
-        $this->redirect(route('admin.products.index'));
     }
 
     public function render(): View

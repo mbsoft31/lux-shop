@@ -1,7 +1,7 @@
 <div x-data="{open: @entangle('show')}" class="relative isolate z-50" role="dialog" aria-modal="true">
     <div>
         <x-primary-button @click="open = true">
-            {{ __('Add Product') }}
+            {{ $label }}
         </x-primary-button>
     </div>
     <div x-show="open" x-transition:enter="ease-in-out duration-500" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="ease-in-out duration-500" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0" class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" style="display: none"></div>
@@ -36,13 +36,13 @@
                                 <div>
                                     <x-input-label for="name" :value="__('Name')" />
                                     <x-text-input wire:model="form.name" id="name" name="name" type="text" class="mt-1 block w-full" required autofocus autocomplete="name" />
-                                    <x-input-error class="mt-2" :messages="$errors->get('name')" />
+                                    <x-input-error class="mt-2" :messages="$errors->get('form.name')" />
                                 </div>
 
                                 <div>
                                     <x-input-label for="description" :value="__('Description')" />
                                     <x-text-input wire:model="form.description" id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description')" autocomplete="description" />
-                                    <x-input-error class="mt-2" :messages="$errors->get('description')" />
+                                    <x-input-error class="mt-2" :messages="$errors->get('form.description')" />
                                 </div>
 
                                 <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">

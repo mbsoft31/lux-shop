@@ -4,6 +4,7 @@ namespace Core\Product\Models;
 
 use App\Models\Inventory;
 use Exception;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Spatie\LaravelData\Data;
 
 class InventoryData extends Data
@@ -38,15 +39,12 @@ class InventoryData extends Data
     }
 
     /**
-     * @throws Exception
+     * @throws ModelNotFoundException<Inventory>
      */
     public function toModel(): Inventory
     {
         if ($this->id !== null) {
-            $inventory = Inventory::find($this->id);
-            if (!$inventory) {
-                throw new Exception('Inventory not found');
-            }
+            $inventory = Inventory::findOrFail($this->id);
         } else {
             $inventory = new Inventory();
             $inventory->id = $this->id;

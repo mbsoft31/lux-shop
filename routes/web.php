@@ -27,6 +27,10 @@ Route::post('/product', [ProductController::class, 'store'])
     ->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
     ->name('admin.product.store');
 
+Route::patch('/product/{product}', [ProductController::class, 'update'])
+    ->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
+    ->name('admin.product.update');
+
 /*Route::get('/product/{product}', function (\App\Models\Product $product) {
     return view('admin.product.show', [
         'product' => $product,

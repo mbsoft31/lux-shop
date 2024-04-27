@@ -26,8 +26,9 @@
                                     reader.readAsDataURL(file);
                                 },
                             }"
+                            enctype="multipart/form-data"
                             method="post"
-                            action="{{ route('profile.update') }}" class="mt-6 space-y-6">
+                            action="{{ route('admin.product.update', $product->id) }}" class="mt-6 space-y-6">
                             @csrf
                             @method('patch')
 
@@ -50,7 +51,7 @@
 
                             <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
                                 <div class="h-14 w-14 flex-shrink-0">
-                                    <img class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2" :src="image" alt="{{ 'image of '.$product->name }}">
+                                    <img class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2" src="{{$product->image}}" alt="{{ 'image of '.$product->name }}">
                                 </div>
                                 <div>
                                     <x-input-label for="image" :value="__('Image')" />
@@ -103,6 +104,7 @@
                                     <thead>
                                     <tr>
                                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0">Name</th>
+                                        <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">{{__('Quantity')}}</th>
                                         <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
                                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                                             <span class="sr-only">Edit</span>
@@ -131,14 +133,13 @@
                                                 </div>
                                             </td>
                                             <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
+                                                <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">{{ $item->quantity }}</span>
+                                            </td>
+                                            <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
                                                 <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Active</span>
                                             </td>
                                             <td class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                                 <livewire:inventory-item-form :label="__('Edit')" :item="$item" :inventory="$inventory" :product="$inventory->product" />
-                                                {{--<a href="{{ route('admin.product.edit', $product->id) }}" class="text-indigo-600 hover:text-indigo-900">
-                                                    Edit
-                                                    <div class="inline sr-only">, {{ $item->sku }}</div>
-                                                </a>--}}
                                             </td>
                                         </tr>
                                     @empty

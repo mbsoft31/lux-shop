@@ -6,7 +6,9 @@ use App\Models\Product;
 use Core\Product\Models\ProductData;
 use Core\Product\Providers\ProductFacade as ProductService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class ProductController
@@ -40,15 +42,39 @@ class ProductController
      * Store a newly created product in storage.
      *
      * @param ProductStoreRequest $request
-     * @return JsonResponse
+     * @return RedirectResponse
      */
-    public function store(ProductStoreRequest $request): JsonResponse
+    public function store(ProductStoreRequest $request): RedirectResponse
     {
         // Create the product
         $product = ProductService::create($request->validated());
 
         // Return response with the created product information
-        return response()->json($product, 201);
+        return back()->with('success', 'Product created successfully');
+    }
+
+    /**
+     * Update the specified product in storage.
+     *
+     * @param ProductStoreRequest $request
+     * @param int $id
+     * @return RedirectResponse
+     */
+    public function update(Request $request, int $id): \Illuminate\Http\RedirectResponse
+    {
+        $inputs = $request->all();
+        $inputs['id'] = $id;
+
+        // upload image
+        if ($request->hasFile('image')) {
+            $inputs['image'] = $request->file('image')->store('public/products/'. $id);
+            $inputs['image'] = Storage::url($inputs['image']);
+        }
+        // Update the product
+        $product = ProductService::update($id, $inputs);
+
+        // Return response with the updated product information
+        return back()->with('success', 'Product updated successfully');
     }
 
     /**
