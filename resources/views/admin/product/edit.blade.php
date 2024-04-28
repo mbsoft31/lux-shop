@@ -50,8 +50,8 @@
                             </div>
 
                             <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
-                                <div class="h-14 w-14 flex-shrink-0">
-                                    <img class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2" src="{{$product->image}}" alt="{{ 'image of '.$product->name }}">
+                                <div class="h-64 w-64 flex-shrink-0">
+                                    <img class="h-64 w-64 rounded-full ring-2 ring-indigo-600 ring-offset-2 object-cover" src="{{$product->image}}" alt="{{ 'image of '.$product->name }}">
                                 </div>
                                 <div>
                                     <x-input-label for="image" :value="__('Image')" />

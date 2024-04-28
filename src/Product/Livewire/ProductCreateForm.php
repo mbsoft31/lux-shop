@@ -2,6 +2,7 @@
 
 namespace Core\Product\Livewire;
 
+use Core\Product\Models\ProductData;
 use Core\Product\Providers\ProductFacade;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -24,7 +25,7 @@ class ProductCreateForm extends Component
     {
         $this->validateForm();
         $product = $this->createProduct();
-        $this->updateProductImage($product);
+        // $this->updateProductImage($product);
         $this->resetForm();
 
         $this->redirect(route('admin.product.edit', $product->id));
@@ -44,12 +45,17 @@ class ProductCreateForm extends Component
         return ProductFacade::create($this->form);
     }
 
-    private function updateProductImage($product): void
+    private function updateProductImage(ProductData $product): bool
     {
-        $this->form['image'] = $this->form['image']->store('public/products/'. $product->id);
-        $this->form['image'] = Storage::url($this->form['image']);
-        $product->image = $this->form['image'];
-        $product->toModel()->save();
+        if ($product->image != $this->form['image'])
+        {
+            $path = $this->form['image']->store('public/products/'. $product->id);
+            $path = Storage::url($path);
+            $product->image = $path;
+            return $product->toModel()->save();
+        }else {
+            return false;
+        }
     }
 
     private function resetForm(): void

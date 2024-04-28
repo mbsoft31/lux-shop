@@ -45,7 +45,7 @@
                                     <x-input-error class="mt-2" :messages="$errors->get('form.description')" />
                                 </div>
 
-                                <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
+                                {{--<div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
                                     <div class="h-14 w-14 flex-shrink-0">
                                         @if ($form['image'] instanceof TemporaryUploadedFile)
                                             <img src="{{ $form->image->temporaryUrl() }}" alt="{{ 'image of '}}" class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2">
@@ -59,7 +59,7 @@
                                         <input wire:model="form.image" id="image" name="image" type="file" class="mt-1 block w-full" />
                                         <x-input-error class="mt-2" :messages="$errors->get('form.image')"/>
                                     </div>
-                                </div>
+                                </div>--}}
 
                                 <div class="flex items-center gap-4">
                                     <x-primary-button>{{ __('Save') }}</x-primary-button>
