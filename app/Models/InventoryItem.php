@@ -16,7 +16,6 @@ class InventoryItem extends Model
     {
         return [
             'meta' => 'array',
-            'status' => 'string',
         ];
     }
 

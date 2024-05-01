@@ -147,12 +147,21 @@ class ProductService
     public function createInventoryItem(int $inventoryId, array $data): InventoryItemData
     {
         $inventory = Inventory::findOrFail($inventoryId);
+        $product = $inventory->product;
         $item = InventoryItemData::fromArray([
             ...$data,
             'product_id' => $inventory->product_id,
             'inventory_id' => $inventory->id,
         ])->toModel();
         $inventory->items()->save($item);
+        $total_quantity = 0;
+        foreach($inventory->items as $item) {
+            $total_quantity += $item->quantity;
+        }
+        $inventory->quantity = $total_quantity;
+        $inventory->save();
+        $product->quantity = $total_quantity;
+        $product->save();
         return InventoryItemData::fromModel($item);
     }
 

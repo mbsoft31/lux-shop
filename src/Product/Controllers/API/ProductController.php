@@ -39,6 +39,18 @@ class ProductController
     }
 
     /**
+     * Show the form for creating a new product.
+     *
+     * @return View
+     */
+    public function create(): View
+    {
+        return view('admin.product.create', [
+            'metaConfig' => ProductData::metaConfig(),
+        ]);
+    }
+
+    /**
      * Store a newly created product in storage.
      *
      * @param ProductStoreRequest $request
@@ -51,6 +63,20 @@ class ProductController
 
         // Return response with the created product information
         return back()->with('success', 'Product created successfully');
+    }
+
+    /**
+     * Show the form for creating a new product.
+     *
+     * @param Product $product
+     * @return View
+     */
+    public function edit(Product $product): View
+    {
+        return view('admin.product.edit', [
+            'product' => $product,
+            'inventory' => $product->inventory,
+        ]);
     }
 
     /**

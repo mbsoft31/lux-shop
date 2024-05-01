@@ -39,11 +39,69 @@
                                     <x-input-error class="mt-2" :messages="$errors->get('form.name')" />
                                 </div>
 
+                                <div class="flex items-center justify-between gap-4">
+                                    <div class="flex-grow">
+                                        <x-input-label for="purchase_price" :value="__('Price (Purchase)')" />
+                                        <x-text-input wire:model="form.purchase_price" id="purchase_price" name="purchase_price" type="text" class="mt-1 block w-full" required autofocus autocomplete="purchase_price" />
+                                        <x-input-error class="mt-2" :messages="$errors->get('form.purchase_price')" />
+                                    </div>
+
+                                    <div class="flex-grow">
+                                        <x-input-label for="sell_price" :value="__('Price (Sell)')" />
+                                        <x-text-input wire:model="form.sell_price" id="sell_price" name="sell_price" type="text" class="mt-1 block w-full" required autofocus autocomplete="sell_price" />
+                                        <x-input-error class="mt-2" :messages="$errors->get('form.sell_price')" />
+                                    </div>
+
+                                </div>
+
                                 <div>
+                                    <x-input-label for="quantity" :value="__('Quantity')" />
+                                    <x-text-input wire:model="form.quantity" id="quantity" name="quantity" type="text" class="mt-1 block w-full" required autofocus autocomplete="quantity" />
+                                    <x-input-error class="mt-2" :messages="$errors->get('form.quantity')" />
+                                </div>
+
+                                <div>
+                                    <div class='block font-semibold text-lg text-gray-700 border-b'>
+                                        {{ __('Meta Information') }}
+                                    </div>
+                                </div>
+                                <div class="flex items-center justify-between gap-4">
+                                    <div class="flex-grow">
+                                        <x-input-label for="meta.type" :value="__('Clothing type')" />
+                                        <select
+                                            wire:model="form.meta.type"
+                                            wire:change="updateMetaSizeType"
+                                            id="meta.type"
+                                            name="meta.type"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        >
+                                            @foreach($metaConfig['type']['options'] as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                    <div class="flex-grow">
+                                        <x-input-label for="meta.size_type" :value="__('Size type')" />
+                                        <select
+                                            wire:model="form.meta.size_type"
+                                            id="meta.size_type"
+                                            name="meta.size_type"
+                                            class="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
+                                        >
+                                            @foreach($metaConfig['size_type']['options'] as $key => $value)
+                                                <option value="{{ $key }}">{{ $value }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                {{--<div>
                                     <x-input-label for="description" :value="__('Description')" />
                                     <x-text-input wire:model="form.description" id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description')" autocomplete="description" />
                                     <x-input-error class="mt-2" :messages="$errors->get('form.description')" />
-                                </div>
+                                </div>--}}
 
                                 {{--<div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
                                     <div class="h-14 w-14 flex-shrink-0">

@@ -14,7 +14,7 @@
                             </p>
                         </div>
                         <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
-                            {{--<x-primary-button link="true" href="{{ route('admin.product.create') }}">
+                            {{--<x-primary-button link="true" href="{{ route('admin.products.create') }}">
                                 {{ __('Add Product') }}
                             </x-primary-button>--}}
                             <livewire:product-create-form :show="false" :label="__('Add Product')" />
@@ -55,7 +55,7 @@
                                                 <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">Active</span>
                                             </td>
                                             <td class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                                <a href="{{ route('admin.product.edit', $product->id) }}" class="text-indigo-600 hover:text-indigo-900">
+                                                <a href="{{ route('admin.products.edit', $product->id) }}" class="text-indigo-600 hover:text-indigo-900">
                                                     Edit
                                                     <div class="inline sr-only">, {{ $product->name }}</div>
                                                 </a>

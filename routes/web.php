@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Models\Product;
 use Core\Auth\Enums\UserRole;
 use Core\Product\Controllers\API\ProductController;
+use Core\Sales\Controllers\SalesController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,41 +15,54 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/products', [ProductController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('admin.products.index');
+Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
+    ->as('admin.products.')
+    ->prefix('/products')
+    ->group(function () {
 
-Route::get('/product/create', function () {
-    return view('admin.product.create');
-})->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
-    ->name('admin.product.create');
+        Route::get(
+            uri: '/',
+            action: [ProductController::class, 'index']
+        )->name('index');
 
-Route::post('/product', [ProductController::class, 'store'])
-    ->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
-    ->name('admin.product.store');
+        Route::get(
+            uri: '/create',
+            action: [ProductController::class, 'create']
+        )->name('create');
 
-Route::patch('/product/{product}', [ProductController::class, 'update'])
-    ->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
-    ->name('admin.product.update');
+        Route::post(
+            uri: '/',
+            action: [ProductController::class, 'store']
+        )->name('store');
 
-/*Route::get('/product/{product}', function (\App\Models\Product $product) {
-    return view('admin.product.show', [
-        'product' => $product,
-        'inventory' => $product->inventory,
-    ]);
-})->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
-    ->name('admin.product.show');*/
+        Route::get(
+            uri: '/{product}/edit',
+            action: [ProductController::class, 'edit']
+        )->name('edit');
 
-Route::get('/product/{product}/edit', function (Product $product) {
-    // TODO: implement javascript for the form to function properly
-    // TODO: implement the form to update the product
-    // TODO: implement the form to update the inventory items
-    return view('admin.product.edit', [
-        'product' => $product,
-        'inventory' => $product->inventory,
-    ]);
-})->middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
-    ->name('admin.product.edit');
+        Route::patch(
+            uri: '/{product}',
+            action: [ProductController::class, 'update']
+        )->name('update');
+
+    });
+
+Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
+    ->as('admin.sales.')
+    ->prefix('/sales')
+    ->group(function () {
+
+        Route::get(
+            uri: '/',
+            action: [SalesController::class, 'index']
+        )->name('index');
+
+        Route::get(
+            uri: '/create',
+            action: [SalesController::class, 'create']
+        )->name('create');
+
+    });
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

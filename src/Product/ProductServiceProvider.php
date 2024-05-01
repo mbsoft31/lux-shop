@@ -4,6 +4,9 @@ namespace Core\Product;
 
 use Core\Product\Livewire\InventoryItemForm;
 use Core\Product\Livewire\ProductCreateForm;
+use Core\Product\Livewire\ProductCreateFormStatic;
+use Core\Product\Livewire\ProductMetaForm;
+use Core\Product\Livewire\ProductVariants;
 use Core\Product\Providers\ProductService;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
@@ -24,6 +27,21 @@ class ProductServiceProvider extends ServiceProvider
         Livewire::component(
             'product-create-form',
             ProductCreateForm::class
+        );
+
+        Livewire::component(
+            'product-create-form-static',
+            ProductCreateFormStatic::class
+        );
+
+        Livewire::component(
+            'product-meta-form',
+            ProductMetaForm::class
+        );
+
+        Livewire::component(
+            'product-variants-list',
+            ProductVariants::class
         );
 
         // register web and api routes

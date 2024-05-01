@@ -25,26 +25,9 @@
                             <div class="mt-6 py-4 space-y-6 border-t">
                                 <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-start">
                                     <div class="flex-1">
-                                        <x-input-label for="sku" :value="__('SKU')"/>
-                                        <x-text-input wire:model="form.sku" id="sku" name="sku" type="text" class="mt-1 block w-full" required autofocus autocomplete="sku"/>
-                                        <x-input-error class="mt-2" :messages="$errors->get('form.sku')"/>
-                                    </div>
-                                    <div class="flex-1">
                                         <x-input-label for="barcode" :value="__('Bar code')"/>
                                         <x-text-input wire:model="form.barcode" id="barcode" name="barcode" type="text" class="mt-1 block w-full" required autofocus autocomplete="barcode"/>
                                         <x-input-error class="mt-2" :messages="$errors->get('form.barcode')"/>
-                                    </div>
-                                </div>
-                                <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-start">
-                                    <div class="flex-1">
-                                        <x-input-label for="purchase_price" :value="__('Price (Purchase)')"/>
-                                        <x-text-input wire:model="form.purchase_price" id="purchase_price" name="purchase_price" type="text" class="mt-1 block w-full" required autofocus autocomplete="purchase_price"/>
-                                        <x-input-error class="mt-2" :messages="$errors->get('form.purchase_price')"/>
-                                    </div>
-                                    <div class="flex-1">
-                                        <x-input-label for="sell_price" :value="__('Price (Sell)')"/>
-                                        <x-text-input wire:model="form.sell_price" id="sell_price" name="sell_price" type="text" class="mt-1 block w-full" required autofocus autocomplete="sell_price"/>
-                                        <x-input-error class="mt-2" :messages="$errors->get('form.sell_price')"/>
                                     </div>
                                 </div>
                                 <div>
@@ -52,42 +35,23 @@
                                     <x-text-input wire:model="form.quantity" id="quantity" name="quantity" type="text" class="mt-1 block w-full" required autofocus autocomplete="quantity"/>
                                     <x-input-error class="mt-2" :messages="$errors->get('form.quantity')"/>
                                 </div>
-                                <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
-                                    <div class="h-14 w-14 flex-shrink-0">
-                                        @if ($form['image'] instanceof TemporaryUploadedFile)
-                                            <img src="{{ $form->image->temporaryUrl() }}" alt="{{ 'image of '}}" class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2">
-                                        @else
-                                            <img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="{{ 'image of '}}" class="h-14 w-14 rounded-full ring-2 ring-indigo-600 ring-offset-2">
-                                        @endif
-                                    </div>
-
-                                    <div>
-                                        <x-input-label for="image" :value="__('Image')"/>
-                                        <input id="image" name="image" type="file" class="mt-1 block w-full" wire:model="form.image"
-                                        />
-                                        <x-input-error class="mt-2" :messages="$errors->get('form.image')"/>
-                                    </div>
-                                </div>
 
                                 {{--Optional Metadata--}}
                                 <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-start">
                                     <div class="flex-1">
                                         <x-input-label for="size" :value="__('size')"/>
-                                        <select wire:model="form.size" id="size" name="size" class="mt-1 block w-full" required autofocus autocomplete="size">
+                                        <select wire:model="form.meta.size" id="size" name="size" class="mt-1 block w-full" required autofocus autocomplete="size">
                                             <option value="">Select Size</option>
-                                            <option value="XS">Extra Small</option>
-                                            <option value="S">Small</option>
-                                            <option value="M">Medium</option>
-                                            <option value="L">Large</option>
-                                            <option value="XL">Extra Large</option>
-                                            <option value="XXL">Double Extra Large</option>
+                                            @foreach($sizes as $key => $value)
+                                                <option value="{{ $value }}">{{ $value }}</option>
+                                            @endforeach
                                         </select>
-                                        <x-text-input wire:model="form.size" id="size" name="size" type="text" class="mt-1 block w-full" required autofocus autocomplete="size"/>
+                                        {{--<x-text-input wire:model="form.meta.size" id="size" name="size" type="text" class="mt-1 block w-full" required autofocus autocomplete="size"/>--}}
                                         <x-input-error class="mt-2" :messages="$errors->get('form.size')"/>
                                     </div>
                                     <div class="flex-1">
                                         <x-input-label for="color" :value="__('color')"/>
-                                        <x-text-input wire:model="form.color" id="color" name="color" type="color" class="mt-1 block w-full h-10 p-0" autofocus autocomplete="color"/>
+                                        <x-text-input wire:model="form.meta.color" id="color" name="color" type="color" class="mt-1 block w-full h-10 p-0" autofocus autocomplete="color"/>
                                         <x-input-error class="mt-2" :messages="$errors->get('form.color')"/>
                                     </div>
                                 </div>

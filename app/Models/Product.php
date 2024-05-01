@@ -14,8 +14,20 @@ class Product extends Model
 
     protected $guarded = [];
 
+    protected function casts(): array
+    {
+        return [
+            'meta' => 'array',
+        ];
+    }
+
     public function inventory(): HasOne
     {
         return $this->hasOne(Inventory::class, 'product_id');
+    }
+
+    public function items(): HasMany
+    {
+        return $this->hasMany(InventoryItem::class, 'product_id');
     }
 }

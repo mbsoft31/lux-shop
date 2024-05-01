@@ -15,7 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
+            $table->decimal('purchase_price', 10, 2)->default(0);
+            $table->decimal('sell_price', 10, 2)->default(0);
+            $table->integer('quantity')->default(0);
             $table->string('image')->nullable();
+            $table->text('meta')->nullable();
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 namespace Core\Product\Livewire;
 
 use App\Models\InventoryItem;
+use App\Models\Product;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -15,10 +16,13 @@ class InventoryItemForm extends Component
 
     public bool $show = false;
     public string $label = 'Create';
+
+    public Product $product;
     public $form = [];
 
-    public function mount($item, $product, $inventory, $label = 'create'): void
+    public function mount($item, $product, $inventory, $label = 'Create'): void
     {
+        $this->product = $product;
         $this->form = $item ? $item->toArray() : $this->createNewItem($product, $inventory);
         $this->label = $label;
     }
@@ -28,14 +32,13 @@ class InventoryItemForm extends Component
         return [
             'product_id' => $product->id,
             'inventory_id' => $inventory->id,
-            'sku' => $this->generateSKU($inventory->id),
             'barcode' => $this->generateBarcode($inventory->id, $product->id),
-            'purchase_price' => 0.0,
-            'sell_price' => 0.0,
             'quantity' => 0,
-            'size' => 'M',
-            'color' => '#000000',
             'image' => '',
+            'meta' => [
+                'size' => 'M',
+                'color' => '#000000',
+            ]
         ];
     }
 
@@ -67,62 +70,34 @@ class InventoryItemForm extends Component
     private function validateForm(): array
     {
         return $this->validate([
-            'form.sku' => 'required',
             'form.barcode' => 'required',
-            'form.purchase_price' => 'required',
-            'form.sell_price' => 'required',
             'form.quantity' => 'required',
-            'form.size' => 'required',
-            'form.color' => 'required',
-            'form.image' => 'required',
+            'form.image' => 'nullable',
+            'form.meta.size' => 'required',
+            'form.meta.color' => 'required',
         ], [
-            'form.sku.required' => __('SKU is required'),
             'form.barcode.required' => __('Barcode is required'),
-            'form.purchase_price.required' => __('Purchase price is required'),
-            'form.sell_price.required' => __('Sell price is required'),
             'form.quantity.required' => __('Quantity is required'),
-            'form.size.required' => __('Size is required'),
-            'form.color.required' => __('Color is required'),
-            'form.image.required' => __('Image is required'),
+            'form.image.nullable' => __('Image is optional'),
+            'form.meta.size.required' => __('Size is required'),
+            'form.meta.color.required' => __('Color is required'),
         ]);
     }
 
     private function updateItem($item): InventoryItem
     {
-        $this->form['image'] = $this->updateImage($item);
         $item->update($this->form);
         return $item;
     }
 
-    private function updateImage($item): string
-    {
-        if ($item->image != $this->form['image']) {
-            return $this->storeImage();
-        }
-
-        return $item->image;
-    }
-
     private function createItem(): InventoryItem
     {
-        $this->form['image'] = $this->storeImage();
         return InventoryItem::create($this->form);
-    }
-
-    private function storeImage(): string
-    {
-        $path = $this->form['image']->store('public/products/'. $this->form['product_id'] .'/inventory-items');
-        return Storage::url($path);
     }
 
     public function generateBarcode($inventoryId, $productId): string
     {
         return 'BC-' . str_pad($inventoryId, 5, '0', STR_PAD_LEFT) . '-' . str_pad($productId, 5, '0', STR_PAD_LEFT) . '-' . rand(100, 999);
-    }
-
-    public function generateSKU($inventoryId): string
-    {
-        return 'SKU-' . str_pad($inventoryId, 5, '0', STR_PAD_LEFT) . '-' . rand(100, 999);
     }
 
     public function updateInventory(InventoryItem $item): bool
@@ -135,6 +110,20 @@ class InventoryItemForm extends Component
 
     public function render(): View
     {
-        return view('admin.Inventory.Item.form');
+        $sizes = [
+            "char" => [
+                "XS" => "Extra Small",
+                "S" => "Small",
+                "M" => "Medium",
+                "L" => "Large",
+                "XL" => "Extra Large",
+                "XXL" => "Double Extra Large",
+            ],
+            "numeric" => range(36, 46),
+        ];
+        $sizeType = $this->product->meta['size_type'];
+        return view('admin.Inventory.Item.form', [
+            "sizes" => $sizes[$sizeType]
+        ]);
     }
 }

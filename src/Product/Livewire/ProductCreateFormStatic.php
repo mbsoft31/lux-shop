@@ -9,7 +9,7 @@ use Illuminate\View\View;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
-class ProductCreateForm extends Component
+class ProductCreateFormStatic extends Component
 {
     use WithFileUploads;
 
@@ -54,11 +54,18 @@ class ProductCreateForm extends Component
 
     private function validateForm(): void
     {
-        $this->validate([
+        $meta_rule = (ProductData::fromArray($this->form))->MetaFieldRules();
+        $meta_rule = collect($meta_rule)->mapWithKeys(function ($value, $key) {
+            return ['form.' . $key => $value];
+        })->toArray();
+        $this->validate(array_merge([
             'form.name' => 'required|string',
             'form.description' => 'nullable|string',
+            'form.purchase_price' => 'required|numeric',
+            'form.sell_price' => 'required|numeric',
+            'form.quantity' => 'required|numeric',
             'form.image' => 'nullable|image|max:1024',
-        ]);
+        ]), $meta_rule);
     }
 
     private function createProduct()
@@ -88,7 +95,7 @@ class ProductCreateForm extends Component
 
     public function render(): View
     {
-        return view('admin.product.partials.product-form', [
+        return view('admin.product.partials.product-create-form', [
             'metaConfig' => ProductData::metaConfig(),
         ]);
     }
