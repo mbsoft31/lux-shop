@@ -34,7 +34,7 @@ class ProductData extends Data
             sell_price: $data['sell_price'] ?? 0,
             quantity: $data['quantity'] ?? 0,
             image: $data['image'] ?? null,
-            meta: $data['meta'],
+            meta: $data['meta'] ?? [],
         );
     }
 
@@ -48,7 +48,7 @@ class ProductData extends Data
             sell_price: $model?->sell_price ?? 0,
             quantity: $model?->quantity ?? 0,
             image: $model->image,
-            meta: $model->meta,
+            meta: $model?->meta ?? [],
         );
     }
 
