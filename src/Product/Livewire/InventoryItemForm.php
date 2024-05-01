@@ -59,7 +59,7 @@ class InventoryItemForm extends Component
             session()->flash('error', 'Failed to update inventory');
         }
 
-        $this->redirect(route('admin.product.edit', $this->form['product_id']));
+        $this->redirect(route('admin.products.edit', $this->form['product_id']));
     }
 
     /**
