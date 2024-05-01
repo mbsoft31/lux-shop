@@ -32,14 +32,21 @@
                             <td class="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                                 <div class="flex items-center">
                                     <div class="h-11 w-11 flex-shrink-0">
-                                        <img class="h-11 w-11 rounded-full"
-                                             src="{{ $item?->image }}"
-                                             alt=""
-                                        >
+                                        @if($item?->image)
+                                            <img class="h-11 w-11 rounded-full"
+                                                 src="{{ $item->image }}"
+                                                 alt=""
+                                            >
+                                        @else
+                                            <div
+                                                class="h-11 w-11 rounded-full"
+                                                style="background-color: {{ $item->meta['color'] ?? '#000' }}"
+                                            ></div>
+                                        @endif
                                     </div>
                                     <div class="ml-4">
                                         <div class="font-medium text-gray-900">
-                                            {{ $item->sku }}
+                                            {{ __('Size') }}: {{ $item->meta['size'] }}
                                         </div>
                                         <div class="mt-1 text-gray-500 line-clamp-1">
                                             {{ $item->barcode }}
@@ -53,8 +60,8 @@
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-3 py-5 text-sm text-gray-500">
-                                <span class="inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20">
-                                    Active
+                                <span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset {{ $item->quantity >0 ? 'bg-green-50 text-green-700 ring-green-600/20' : 'bg-red-50 text-red-700 ring-red-600/20' }}">
+                                    {{ $item->quantity > 0 ? __('Available') : __('Out of stock')}}
                                 </span>
                             </td>
                             <td class="relative whitespace-nowrap py-5 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
