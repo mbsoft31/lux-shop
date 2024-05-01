@@ -44,9 +44,9 @@ class ProductData extends Data
             id: $model->id,
             name: $model->name,
             description: $model->description,
-            purchase_price: $model->purchase_price,
-            sell_price: $model->sell_price,
-            quantity: $model->quantity,
+            purchase_price: $model?->purchase_price ?? 0,
+            sell_price: $model?->sell_price ?? 0,
+            quantity: $model?->quantity ?? 0,
             image: $model->image,
             meta: $model->meta,
         );
