@@ -43,7 +43,7 @@
                                         <select wire:model="form.meta.size" id="size" name="size" class="mt-1 block w-full" required autofocus autocomplete="size">
                                             <option value="">Select Size</option>
                                             @foreach($sizes as $key => $value)
-                                                <option value="{{ $value }}">{{ $value }}</option>
+                                                <option value="{{ $key }}">{{ $value }}</option>
                                             @endforeach
                                         </select>
                                         {{--<x-text-input wire:model="form.meta.size" id="size" name="size" type="text" class="mt-1 block w-full" required autofocus autocomplete="size"/>--}}

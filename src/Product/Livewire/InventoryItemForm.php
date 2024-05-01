@@ -119,7 +119,16 @@ class InventoryItemForm extends Component
                 "XL" => "Extra Large",
                 "XXL" => "Double Extra Large",
             ],
-            "numeric" => range(36, 46),
+            "numeric" => [
+                "39" => 39,
+                "40" => 40,
+                "41" => 41,
+                "42" => 42,
+                "43" => 43,
+                "44" => 44,
+                "45" => 45,
+                "46" => 46,
+            ],
         ];
         $sizeType = $this->product->meta['size_type'];
         return view('admin.Inventory.Item.form', [
