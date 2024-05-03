@@ -2,6 +2,7 @@
 
 namespace Core\Sales\Providers;
 
+use App\Models\InventoryItem;
 use App\Models\Sale;
 use App\Models\SaleItem;
 use Core\Customer\Models\CustomerData;
@@ -53,7 +54,9 @@ class SalesService
                 saleId: $sale->id,
                 inventoryItemId: $item['inventory_item_id'],
                 quantity: $item['quantity'],
-                price: $item['price']
+                price: $item['price'],
+                discount_amount: $item['discount_amount'],
+                total_amount: $item['total_amount']
             );
         }
         $sale->calculateTotalAmount();
@@ -64,10 +67,12 @@ class SalesService
      * @param int $inventoryItemId
      * @param int $quantity
      * @param float $price
+     * @param float $discount_amount
+     * @param float $total_amount
      * @return SaleItem|Model
-     * @throws ModelNotFoundException
+     * @throws ModelNotFoundException<InventoryItem>
      */
-    public function addSaleItem(int $saleId, int $inventoryItemId, int $quantity, float $price): Model|SaleItem
+    public function addSaleItem(int $saleId, int $inventoryItemId, int $quantity, float $price, float $discount_amount = 0, float $total_amount = 0): Model|SaleItem
     {
         $sale = Sale::findOrFail($saleId);
         $inventoryItem = $this->productService->findInventoryItem($inventoryItemId);
@@ -75,6 +80,8 @@ class SalesService
             'inventory_item_id' => $inventoryItem->id,
             'quantity' => $quantity,
             'price' => $price,
+            'discount_amount' => $discount_amount,
+            'total_amount' => $total_amount
         ]);
     }
 

@@ -38,7 +38,9 @@ class Sale extends Model
      */
     public function calculateTotalAmount(): bool
     {
-        $this->total_amount = $this->items->sum(fn(SaleItem $item) => $item->quantity * $item->price);
+        $this->total_amount = $this->items->sum(
+            fn(SaleItem $item) => $item->total_amount
+        );
         return $this->save();
     }
 }

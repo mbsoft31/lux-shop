@@ -40,7 +40,7 @@
 
                             <div>
                                 <x-input-label for="description" :value="__('Description')" />
-                                <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description', $product->description)" required autofocus autocomplete="description" />
+                                <x-text-input id="description" name="description" type="text" class="mt-1 block w-full" :value="old('description', $product->description)" autocomplete="description" />
                                 <x-input-error class="mt-2" :messages="$errors->get('description')" />
                             </div>
 
@@ -50,8 +50,8 @@
                             </div>
 
                             <div class="flex gap-6 flex-wrap flex-col sm:flex-row sm:items-center">
-                                <div class="h-64 w-64 flex-shrink-0">
-                                    <img class="h-64 w-64 rounded-full ring-2 ring-indigo-600 ring-offset-2 object-cover" src="{{$product->image}}" alt="{{ 'image of '.$product->name }}">
+                                <div class="h-32 w-32 flex-shrink-0">
+                                    <img class="h-32 w-32 rounded-full ring-2 ring-indigo-600 ring-offset-2 object-cover" src="{{$product->image}}" alt="{{ 'image of '.$product->name }}">
                                 </div>
                                 <div>
                                     <x-input-label for="image" :value="__('Image')" />

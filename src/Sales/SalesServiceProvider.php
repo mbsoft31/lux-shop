@@ -2,8 +2,10 @@
 
 namespace Core\Sales;
 
+use Core\Sales\Livewire\SaleCreateForm;
 use Core\Sales\Providers\SalesService;
 use Illuminate\Support\ServiceProvider;
+use Livewire;
 
 class SalesServiceProvider extends ServiceProvider
 {
@@ -15,11 +17,11 @@ class SalesServiceProvider extends ServiceProvider
                 customerService: app('customer-service')
             );
         });
-        // register web and api routes
-        /*$this->loadRoutesFrom(__DIR__ . '../Routes/web.php');
-        $this->loadRoutesFrom(__DIR__ . '../Routes/api.php');
 
-        // register views
-        $this->loadViewsFrom(__DIR__ . '../Resources/Views', 'sales');*/
+        Livewire::component(
+            'sale-create-form',
+            SaleCreateForm::class
+        );
+
     }
 }

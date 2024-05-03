@@ -38,9 +38,15 @@
                                         <tr>
                                             <td class="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
                                                 <div class="flex items-center">
-                                                    <div class="h-11 w-11 flex-shrink-0">
-                                                        <img class="h-11 w-11 rounded-full" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
-                                                    </div>
+                                                    @if($product->image)
+                                                        <div class="h-11 w-11 flex-shrink-0">
+                                                            <img class="h-11 w-11 rounded-full ring-2 ring-indigo-600 ring-offset-2 object-cover" src="{{ $product->image }}" alt="">
+                                                        </div>
+                                                    @else
+                                                        <div class="h-11 w-11 flex-shrink-0">
+                                                            <img class="h-11 w-11 rounded-full ring-2 ring-indigo-600 ring-offset-2 object-cover" src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="">
+                                                        </div>
+                                                    @endif
                                                     <div class="ml-4">
                                                         <div class="font-medium text-gray-900">
                                                             {{ $product->name }}

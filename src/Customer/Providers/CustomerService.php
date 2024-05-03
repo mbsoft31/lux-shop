@@ -58,7 +58,7 @@ class CustomerService
     public function createGuestCustomer()
     {
         return $this->create(Customer::factory()->make([
-            'name' => 'Guest',
+            'name' => 'Guest ' . fake()->name,
         ])->toArray());
     }
 }

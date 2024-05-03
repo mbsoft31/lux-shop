@@ -610,7 +610,8 @@ class DatabaseSeeder extends Seeder
         $productIds = InventoryItem::pluck('id')->toArray();
 
         // auth as cashier
-        Auth::login(User::where('email', 'cashier@mail.com')->first());
+        $cashier = User::where('email', 'cashier@mail.com')->first();
+        Auth::login($cashier);
         for ($i = 0; $i < 10; $i++) {
 
             $sale = SalesFacade::createSale(
@@ -622,10 +623,21 @@ class DatabaseSeeder extends Seeder
             for ($k = 0; $k < $productCount; $k++) {
                 $inventory_item_id = random_int(1, count($productIds));
                 $inventory_item = ProductFacade::findInventoryItem($inventory_item_id);
+
+                $quantity = random_int(1, 5);
+                $price = $inventory_item->product()->sell_price;
+
+                $discount_percent = random_int(0,100);
+                $discount_amount = ( $discount_percent * $price) / 100;
+
+                $total_amount = $quantity * ($price - $discount_amount);
+
                 $items[] = [
                     'inventory_item_id' => $inventory_item->id,
-                    'quantity' => random_int(1, 5),
-                    'price' => $inventory_item->product()->sell_price,
+                    'quantity' => $quantity,
+                    'price' => $price,
+                    'discount_amount' => $discount_amount,
+                    'total_amount' => $total_amount,
                 ];
             }
 

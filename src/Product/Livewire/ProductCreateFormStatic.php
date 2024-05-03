@@ -49,7 +49,7 @@ class ProductCreateFormStatic extends Component
         // $this->updateProductImage($product);
         $this->resetForm();
 
-        $this->redirect(route('admin.product.edit', $product->id));
+        $this->redirect(route('admin.products.edit', $product->id));
     }
 
     private function validateForm(): void

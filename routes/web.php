@@ -47,7 +47,7 @@ Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
 
     });
 
-Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value])
+Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value . '|' . UserRole::CASHIER->value])
     ->as('admin.sales.')
     ->prefix('/sales')
     ->group(function () {
