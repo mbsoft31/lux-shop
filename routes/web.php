@@ -64,6 +64,15 @@ Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value .
 
     });
 
+Route::middleware(['auth', 'verified', 'role:'. UserRole::ADMINISTRATOR->value . '|' . UserRole::CASHIER->value])
+    ->group(function () {
+        Route::get(
+            uri: '/pos',
+            action: [SalesController::class, 'pos']
+        )->name('pos');
+
+    });
+
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
